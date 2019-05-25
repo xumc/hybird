@@ -4,7 +4,7 @@ import (
 	"reflect"
 )
 
-func MapInt64(s interface{}, key string) []int64 {
+func ExtractInt64(s interface{}, key string) []int64 {
 	values := imap(s, key)
 	int64slice := make([]int64, len(values))
 	for i, v := range values {
@@ -13,7 +13,7 @@ func MapInt64(s interface{}, key string) []int64 {
 	return int64slice
 }
 
-func MapInt(s interface{}, key string) []int {
+func ExtractInt(s interface{}, key string) []int {
 	values := imap(s, key)
 	intslice := make([]int, len(values))
 	for i, v := range values {
@@ -22,7 +22,7 @@ func MapInt(s interface{}, key string) []int {
 	return intslice
 }
 
-func MapString(s interface{}, key string) []string {
+func ExtractString(s interface{}, key string) []string {
 	values := imap(s, key)
 	stringslice := make([]string, len(values))
 	for i, v := range values {
