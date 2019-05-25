@@ -4,58 +4,71 @@ As far as I know, the whole world is coming to MicroService. That means for each
    
 ## Comparison
 
-For example, we are working on a business to mesh video data together, and the view count comes from another service. We might write the below code previously.
+For example, we are working on a business to mesh video data together, related structs are:
 ```
 type video struct {
 	ID        int64
 	Name      string
-	ViewCount int
+	ViewCount int // the value of this field are fetched from another service
 }
 
-func GetAllVideosInfos() []video {
-    videos := getVideosFromMyOwnDatabase()
+type videoWithCount struct {
+	ID        int64
+	ViewCount int
+}
+```
+And the view count comes from another service. We might write the below code previously.
+```
+func GetAllVideosInfosPreviously() ([]video, error) {
+	videos, err := getVideosFromMyOwnDatabase()
+	if err != nil {
+		return nil, err
+	}
 
-    videoIDs := make([]int64, len(videos)
-    for i, v := range videos {
-        videoIDs[i] = v.ID
-    }
+	videoIDs := make([]int64, len(videos))
+	for i, v := range videos {
+		videoIDs[i] = v.ID
+	}
 
-    viewCounts := getViewCountsFromAnotherService(videoIDs)
+	viewCounts, err := getViewCountsFromAnotherService(videoIDs)
+	if err != nil {
+		return nil, err
+	}
 
-    videoCountsMap = make(map[int64]int)
-    for _, vc := range videoCounts {
-        videoCountsMap[vc.ID] = vc.ViewCount 
-    }
+	videoCountsMap := make(map[int64]int)
+	for _, vc := range viewCounts {
+		videoCountsMap[vc.ID] = vc.ViewCount
+	}
 
-    for i := videos {
-      videos[i] = videoCountsMap[videos[i].ID]
-    }
+	for i := range videos {
+		videos[i].ViewCount = videoCountsMap[videos[i].ID]
+	}
 
-    // Finally, we get what we want.
-    return videos
+	// Finally, we get what we want.
+	return videos, nil
 }
 
 ```
 
 With this utils library, we can write the code as below.
 ```
-type video struct {
-	ID        int64
-	Name      string
-	ViewCount int
-}
+func GetAllVideosInfosNow() ([]video, error) {
+	videos, err := getVideosFromMyOwnDatabase()
+	if err != nil {
+		return nil, err
+	}
+	videoIDs := hybird.ExtractInt64(videos, "ID")
 
-func GetAllVideosInfos() []video {
-    videos := getVideosFromMyOwnDatabase()
-    videoIDs := hybird.ExtractInt64(videos, "ID")
-    
-    viewCounts := getViewCountsFromAnotherService(videoIDs)
-    videoCountsMap :=hybird.MapInt64Int(videoCounts, "ID", "ViewCount")
-    
-    for i := videos {
-        videos[i].VideoCount = videoCountsMap[videos[i].ID]
-    }
-    
-    return videos
+	viewCounts, err := getViewCountsFromAnotherService(videoIDs)
+	if err != nil {
+		return nil, err
+	}
+	videoCountsMap := hybird.MapInt64Int(viewCounts, "ID", "ViewCount")
+
+	for i := range videos {
+		videos[i].ViewCount = videoCountsMap[videos[i].ID]
+	}
+
+	return videos, nil
 }
 ```

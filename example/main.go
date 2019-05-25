@@ -1,6 +1,10 @@
 package main
 
-import hybird "github.com/xumc/hybird"
+import (
+	"fmt"
+	hybird "github.com/xumc/hybird"
+	"reflect"
+)
 
 type video struct {
 	ID        int64
@@ -77,6 +81,9 @@ func GetAllVideosInfosNow() ([]video, error) {
 }
 
 func main() {
-	GetAllVideosInfosPreviously()
-	GetAllVideosInfosNow()
+	vs1, _ := GetAllVideosInfosPreviously()
+	vs2, _ := GetAllVideosInfosNow()
+	if !reflect.DeepEqual(vs1, vs2) {
+		fmt.Println("error happens")
+	}
 }
