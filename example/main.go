@@ -1,5 +1,7 @@
 package example
 
+import hybird "github.com/xumc/hybird"
+
 type video struct {
 	ID        int64
 	Name      string
@@ -11,17 +13,17 @@ type videoWithCount struct {
 	ViewCount int
 }
 
-func getViewCountsFromAnotherService(int64s []int64) ([]videoWithCount, error) {
+func getViewCountsFromAnotherService(_ []int64) ([]videoWithCount, error) {
 	return []videoWithCount{
-		{1, 100,},
-		{2, 1000,},
+		{1, 100},
+		{2, 1000},
 	}, nil
 }
 
 func getVideosFromMyOwnDatabase() ([]video, error) {
 	return []video{
-		{ID: 1, Name: "Titanic",},
-		{ID: 2, Name: "Kill Bill",},
+		{ID: 1, Name: "Titanic"},
+		{ID: 2, Name: "Kill Bill"},
 	}, nil
 }
 
@@ -46,7 +48,7 @@ func GetAllVideosInfosPreviously() ([]video, error) {
 		videoCountsMap[vc.ID] = vc.ViewCount
 	}
 
-	for i := videos {
+	for i := range videos {
 		videos[i].ViewCount = videoCountsMap[videos[i].ID]
 	}
 
@@ -67,7 +69,7 @@ func GetAllVideosInfosNow() ([]video, error) {
 	}
 	videoCountsMap := hybird.MapInt64Int(viewCounts, "ID", "ViewCount")
 
-	for i := videos {
+	for i := range videos {
 		videos[i].ViewCount = videoCountsMap[videos[i].ID]
 	}
 
@@ -75,5 +77,6 @@ func GetAllVideosInfosNow() ([]video, error) {
 }
 
 func main() {
-
+	GetAllVideosInfosPreviously()
+	GetAllVideosInfosNow()
 }
