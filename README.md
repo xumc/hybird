@@ -1,10 +1,10 @@
 # hybird
 
-As far as I know, the whole world is coming to Microservice. That means for each developer, we need to mash data together from multiple data sources. It might be our own database, or other services. If you are working on mash the data together using golang, it might be a nightmare. There are so many similar code. This is a utils for you to reduce repetitive code.
+As far as I know, the whole world is coming to MicroService. That means for each developer, we need to mash data together from multiple data sources. It might be our own database, or other services. If you are working on mash the data together using golang, it might be a nightmare. There are so many similar code. This is a utils for you to reduce repetitive code.
    
-## comparison
+## Comparison
 
-for example, we are working on a business to mesh video data together, and the view count comes from another service. We might write the code below previously.
+For example, we are working on a business to mesh video data together, and the view count comes from another service. We might write the below code previously.
 ```
 type video struct {
 	ID        int64
@@ -53,7 +53,7 @@ func GetAllVideosInfos() []video {
     videoCountsMap :=hybird.MapInt64Int(videoCounts, "ID", "ViewCount")
     
     for i := videos {
-        videos[i] = videoCountsMap[videos[i].ID]
+        videos[i].videoCount = videoCountsMap[videos[i].ID]
     }
     
     return videos
