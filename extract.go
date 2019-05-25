@@ -5,7 +5,7 @@ import (
 )
 
 func ExtractInt64(s interface{}, key string) []int64 {
-	values := imap(s, key)
+	values := iextract(s, key)
 	int64slice := make([]int64, len(values))
 	for i, v := range values {
 		int64slice[i] = v.Int()
@@ -14,7 +14,7 @@ func ExtractInt64(s interface{}, key string) []int64 {
 }
 
 func ExtractInt(s interface{}, key string) []int {
-	values := imap(s, key)
+	values := iextract(s, key)
 	intslice := make([]int, len(values))
 	for i, v := range values {
 		intslice[i] = int(v.Int())
@@ -23,7 +23,7 @@ func ExtractInt(s interface{}, key string) []int {
 }
 
 func ExtractString(s interface{}, key string) []string {
-	values := imap(s, key)
+	values := iextract(s, key)
 	stringslice := make([]string, len(values))
 	for i, v := range values {
 		stringslice[i] = v.String()
@@ -31,20 +31,17 @@ func ExtractString(s interface{}, key string) []string {
 	return stringslice
 }
 
-func imap(s interface{}, key string) []reflect.Value {
+func iextract(s interface{}, key string) []reflect.Value {
 	// validate the first arg s
 	if s == nil {
 		panic("the first arg shouldn't be nil")
 	}
 
-	kind := reflect.TypeOf(s).Kind().String()
+	kind := reflect.TypeOf(s).Kind()
 
-	if kind != "array" && kind != "slice" {
+	if kind != reflect.Array && kind != reflect.Slice {
 		panic("only array and slice are supported for mapping")
 	}
-
-	length := reflect.ValueOf(s).Len()
-	values := make([]reflect.Value, length)
 
 	// validate key
 	keyExist := false
@@ -61,6 +58,9 @@ func imap(s interface{}, key string) []reflect.Value {
 	if !keyExist {
 		panic("key doesn't exist in the struct")
 	}
+
+	length := reflect.ValueOf(s).Len()
+	values := make([]reflect.Value, length)
 
 	// extract values of the key
 	for i := 0; i < length; i++ {
