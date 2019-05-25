@@ -53,7 +53,7 @@ func GetAllVideosInfos() []video {
     videoCountsMap :=hybird.MapInt64Int(videoCounts, "ID", "ViewCount")
     
     for i := videos {
-        videos[i].videoCount = videoCountsMap[videos[i].ID]
+        videos[i].VideoCount = videoCountsMap[videos[i].ID]
     }
     
     return videos
